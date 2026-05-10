@@ -1,0 +1,24 @@
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2
+LDFLAGS = -lstdc++fs
+TARGET = mydb
+SOURCES = main.cpp BPlusTree.cpp global.cpp db.cpp parser.cpp
+HEADERS = BPlusTree.h global.h db.h parser.h
+
+all: $(TARGET)
+
+$(TARGET): $(SOURCES) $(HEADERS)
+	$(CXX) $(CXXFLAGS) $(SOURCES) -o $(TARGET) $(LDFLAGS)
+
+clean:
+	rm -f $(TARGET) *.o
+	rm -rf *_db
+	rm -rf backups
+	rm -f *.list
+	rm -f *.idx
+	rm -f *.csv
+
+run: $(TARGET)
+	./$(TARGET)
+
+.PHONY: all clean run

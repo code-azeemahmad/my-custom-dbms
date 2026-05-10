@@ -1,0 +1,530 @@
+===============================================================================
+                    CUSTOM DBMS - SAMPLE QUERIES
+===============================================================================
+
+This file contains sample DDL (Data Definition Language) and DML (Data Manipulation Language)
+queries for testing the Custom Database Management System.
+
+===============================================================================
+SECTION 1: DATABASE MANAGEMENT
+===============================================================================
+
+-- Create a new database
+CREATE DATABASE company;
+
+-- Show all databases
+SHOW DATABASES;
+
+-- Use the company database
+USE company;
+
+-- Create another database for testing
+CREATE DATABASE school;
+
+-- Switch between databases
+USE school;
+USE company;
+
+-- Drop a database (be careful!)
+DROP DATABASE school;
+
+===============================================================================
+SECTION 2: DDL - CREATE TABLES
+===============================================================================
+
+-- Create departments table with primary key
+CREATE TABLE departments (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50) NOT NULL,
+    location VARCHAR(50),
+    budget FLOAT
+);
+
+-- Create employees table with foreign key reference
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(100) NOT NULL,
+    age INT,
+    dept_id INT REFERENCES departments(dept_id),
+    salary FLOAT,
+    hire_date DATE,
+    email VARCHAR(100) UNIQUE
+);
+
+-- Create projects table
+CREATE TABLE projects (
+    proj_id INT PRIMARY KEY,
+    proj_name VARCHAR(100) NOT NULL,
+    dept_id INT REFERENCES departments(dept_id),
+    start_date DATE,
+    end_date DATE,
+    budget FLOAT
+);
+
+-- Create assignments table (junction table for many-to-many relationship)
+CREATE TABLE assignments (
+    assign_id INT PRIMARY KEY,
+    emp_id INT REFERENCES employees(emp_id),
+    proj_id INT REFERENCES projects(proj_id),
+    hours_worked INT,
+    role VARCHAR(50)
+);
+
+-- Create salaries table with additional constraints
+CREATE TABLE salaries (
+    sal_id INT PRIMARY KEY,
+    emp_id INT REFERENCES employees(emp_id),
+    amount FLOAT NOT NULL,
+    bonus FLOAT DEFAULT 0,
+    tax_deduction FLOAT,
+    net_salary FLOAT,
+    pay_date DATE
+);
+
+-- Show all tables in current database
+SHOW TABLES;
+
+-- Describe table structure
+DESCRIBE employees;
+DESC departments;
+DESCRIBE projects;
+
+===============================================================================
+SECTION 3: DML - INSERT DATA
+===============================================================================
+
+-- Insert departments
+INSERT INTO departments VALUES (1, 'Engineering', 'New York', 1000000);
+INSERT INTO departments VALUES (2, 'Human Resources', 'Chicago', 500000);
+INSERT INTO departments VALUES (3, 'Marketing', 'San Francisco', 750000);
+INSERT INTO departments VALUES (4, 'Finance', 'Boston', 800000);
+INSERT INTO departments VALUES (5, 'Sales', 'Los Angeles', 900000);
+INSERT INTO departments VALUES (6, 'IT Support', 'Austin', 600000);
+INSERT INTO departments VALUES (7, 'Research', 'Seattle', 1200000);
+
+-- Insert employees
+INSERT INTO employees VALUES (101, 'John Smith', 35, 1, 85000, '2020-01-15', 'john.smith@company.com');
+INSERT INTO employees VALUES (102, 'Jane Doe', 28, 1, 75000, '2021-03-20', 'jane.doe@company.com');
+INSERT INTO employees VALUES (103, 'Bob Johnson', 42, 2, 65000, '2019-06-10', 'bob.johnson@company.com');
+INSERT INTO employees VALUES (104, 'Alice Williams', 31, 3, 78000, '2020-11-05', 'alice.w@company.com');
+INSERT INTO employees VALUES (105, 'Charlie Brown', 29, 4, 72000, '2021-08-12', 'charlie.b@company.com');
+INSERT INTO employees VALUES (106, 'Diana Prince', 38, 5, 95000, '2018-04-25', 'diana.p@company.com');
+INSERT INTO employees VALUES (107, 'Edward Norton', 33, 6, 68000, '2022-01-30', 'edward.n@company.com');
+INSERT INTO employees VALUES (108, 'Fiona Apple', 27, 7, 88000, '2021-09-18', 'fiona.a@company.com');
+INSERT INTO employees VALUES (109, 'George Lucas', 45, 3, 92000, '2017-12-01', 'george.l@company.com');
+INSERT INTO employees VALUES (110, 'Hannah Montana', 26, 5, 70000, '2022-06-14', 'hannah.m@company.com');
+
+-- Insert projects
+INSERT INTO projects VALUES (201, 'Cloud Migration', 1, '2023-01-01', '2023-12-31', 500000);
+INSERT INTO projects VALUES (202, 'HR System Upgrade', 2, '2023-02-01', '2023-11-30', 250000);
+INSERT INTO projects VALUES (203, 'Digital Marketing Campaign', 3, '2023-01-15', '2023-10-15', 300000);
+INSERT INTO projects VALUES (204, 'Financial Audit', 4, '2023-03-01', '2023-09-30', 400000);
+INSERT INTO projects VALUES (205, 'Sales CRM Implementation', 5, '2023-02-15', '2023-08-31', 350000);
+INSERT INTO projects VALUES (206, 'AI Research', 7, '2023-01-10', '2024-06-30', 800000);
+
+-- Insert assignments
+INSERT INTO assignments VALUES (301, 101, 201, 150, 'Lead Developer');
+INSERT INTO assignments VALUES (302, 102, 201, 120, 'Developer');
+INSERT INTO assignments VALUES (303, 103, 202, 100, 'Project Manager');
+INSERT INTO assignments VALUES (304, 104, 203, 130, 'Marketing Specialist');
+INSERT INTO assignments VALUES (305, 105, 204, 110, 'Financial Analyst');
+INSERT INTO assignments VALUES (306, 106, 205, 140, 'Sales Director');
+INSERT INTO assignments VALUES (307, 107, 201, 90, 'Support Engineer');
+INSERT INTO assignments VALUES (308, 108, 206, 160, 'Research Scientist');
+INSERT INTO assignments VALUES (309, 109, 203, 80, 'Marketing Manager');
+INSERT INTO assignments VALUES (310, 110, 205, 100, 'Sales Associate');
+INSERT INTO assignments VALUES (311, 101, 206, 50, 'Technical Advisor');
+
+-- Insert salary records
+INSERT INTO salaries VALUES (401, 101, 85000, 5000, 15000, 75000, '2024-01-31');
+INSERT INTO salaries VALUES (402, 102, 75000, 4000, 13000, 66000, '2024-01-31');
+INSERT INTO salaries VALUES (403, 103, 65000, 3000, 11000, 57000, '2024-01-31');
+INSERT INTO salaries VALUES (404, 104, 78000, 4500, 14000, 68500, '2024-01-31');
+INSERT INTO salaries VALUES (405, 105, 72000, 4000, 12500, 63500, '2024-01-31');
+
+===============================================================================
+SECTION 4: DML - SELECT QUERIES (CRUD - READ)
+===============================================================================
+
+-- Select all data
+SELECT * FROM departments;
+SELECT * FROM employees;
+SELECT * FROM projects;
+SELECT * FROM assignments;
+
+-- Select specific columns
+SELECT emp_id, emp_name, salary FROM employees;
+SELECT dept_name, location, budget FROM departments;
+
+-- SELECT with WHERE clause (comparison operators)
+SELECT * FROM employees WHERE salary > 80000;
+SELECT * FROM employees WHERE age < 30;
+SELECT * FROM employees WHERE dept_id = 1;
+SELECT * FROM projects WHERE budget >= 400000;
+SELECT * FROM departments WHERE location = 'New York';
+
+-- SELECT with multiple conditions (AND, OR)
+SELECT * FROM employees WHERE salary > 70000 AND dept_id = 1;
+SELECT * FROM employees WHERE dept_id = 3 OR dept_id = 5;
+SELECT * FROM employees WHERE age BETWEEN 30 AND 40;
+SELECT * FROM employees WHERE emp_name LIKE 'J%';
+SELECT * FROM employees WHERE email LIKE '%@company.com';
+
+-- SELECT with NOT condition
+SELECT * FROM employees WHERE NOT dept_id = 2;
+SELECT * FROM departments WHERE location != 'New York';
+
+-- SELECT with ORDER BY
+SELECT * FROM employees ORDER BY salary DESC;
+SELECT * FROM employees ORDER BY emp_name ASC;
+SELECT * FROM projects ORDER BY start_date;
+SELECT * FROM employees ORDER BY dept_id ASC, salary DESC;
+
+-- SELECT with LIMIT (using ROWNUM concept)
+SELECT * FROM employees LIMIT 5;
+
+===============================================================================
+SECTION 5: DML - UPDATE QUERIES (CRUD - UPDATE)
+===============================================================================
+
+-- Update single column
+UPDATE employees SET salary = 90000 WHERE emp_id = 101;
+
+-- Update multiple columns
+UPDATE employees SET salary = 80000, age = 29 WHERE emp_id = 102;
+
+-- Update with condition
+UPDATE employees SET salary = salary * 1.10 WHERE dept_id = 1;
+UPDATE projects SET budget = budget + 50000 WHERE budget < 300000;
+
+-- Update with multiple conditions
+UPDATE employees SET salary = salary + 5000 WHERE dept_id = 3 AND salary < 80000;
+
+===============================================================================
+SECTION 6: DML - DELETE QUERIES (CRUD - DELETE)
+===============================================================================
+
+-- Delete specific row
+DELETE FROM salaries WHERE sal_id = 405;
+
+-- Delete with condition
+DELETE FROM assignments WHERE hours_worked < 100;
+
+-- Delete multiple rows
+DELETE FROM employees WHERE age > 50;
+
+-- Delete all rows (be careful!)
+DELETE FROM salaries;
+
+===============================================================================
+SECTION 7: AGGREGATE FUNCTIONS
+===============================================================================
+
+-- COUNT - Count rows
+SELECT COUNT(*) FROM employees;
+SELECT COUNT(*) FROM employees WHERE dept_id = 1;
+SELECT COUNT(DISTINCT dept_id) FROM employees;
+
+-- SUM - Sum of values
+SELECT SUM(salary) FROM employees;
+SELECT SUM(budget) FROM departments;
+SELECT SUM(salary) FROM employees WHERE dept_id = 1;
+
+-- AVG - Average of values
+SELECT AVG(salary) FROM employees;
+SELECT AVG(age) FROM employees WHERE dept_id = 3;
+SELECT AVG(hours_worked) FROM assignments;
+
+-- MAX - Maximum value
+SELECT MAX(salary) FROM employees;
+SELECT MAX(budget) FROM projects;
+SELECT MAX(age) FROM employees WHERE dept_id = 2;
+
+-- MIN - Minimum value
+SELECT MIN(salary) FROM employees;
+SELECT MIN(budget) FROM projects;
+SELECT MIN(hours_worked) FROM assignments;
+
+-- Multiple aggregates in one query
+SELECT 
+    COUNT(*) as total_employees,
+    AVG(salary) as avg_salary,
+    MAX(salary) as max_salary,
+    MIN(salary) as min_salary,
+    SUM(salary) as total_salary
+FROM employees;
+
+-- GROUP BY with aggregates
+SELECT dept_id, COUNT(*), AVG(salary) 
+FROM employees 
+GROUP BY dept_id;
+
+SELECT dept_id, COUNT(*) as emp_count, AVG(salary) as avg_salary
+FROM employees
+GROUP BY dept_id
+ORDER BY avg_salary DESC;
+
+===============================================================================
+SECTION 8: JOIN OPERATIONS
+===============================================================================
+
+-- INNER JOIN (implicit syntax)
+SELECT employees.emp_name, departments.dept_name 
+FROM employees, departments 
+WHERE employees.dept_id = departments.dept_id;
+
+-- INNER JOIN (explicit syntax)
+SELECT e.emp_name, d.dept_name, e.salary
+FROM employees e
+INNER JOIN departments d ON e.dept_id = d.dept_id;
+
+-- JOIN with multiple tables
+SELECT e.emp_name, d.dept_name, p.proj_name, a.hours_worked
+FROM employees e
+INNER JOIN departments d ON e.dept_id = d.dept_id
+INNER JOIN assignments a ON e.emp_id = a.emp_id
+INNER JOIN projects p ON a.proj_id = p.proj_id;
+
+-- LEFT JOIN (all employees, even those without assignments)
+SELECT e.emp_name, a.proj_id, a.hours_worked
+FROM employees e
+LEFT JOIN assignments a ON e.emp_id = a.emp_id;
+
+-- RIGHT JOIN
+SELECT e.emp_name, d.dept_name
+FROM employees e
+RIGHT JOIN departments d ON e.dept_id = d.dept_id;
+
+-- JOIN with conditions
+SELECT e.emp_name, d.dept_name, e.salary
+FROM employees e
+INNER JOIN departments d ON e.dept_id = d.dept_id
+WHERE e.salary > 70000
+ORDER BY e.salary DESC;
+
+-- Self JOIN (employees working on same project)
+SELECT a1.emp_id, a2.emp_id, a1.proj_id
+FROM assignments a1, assignments a2
+WHERE a1.proj_id = a2.proj_id AND a1.emp_id < a2.emp_id;
+
+===============================================================================
+SECTION 9: INDEX MANAGEMENT
+===============================================================================
+
+-- Create indexes for better performance
+CREATE INDEX idx_emp_dept ON employees(dept_id);
+CREATE INDEX idx_emp_salary ON employees(salary);
+CREATE INDEX idx_assign_proj ON assignments(proj_id);
+CREATE INDEX idx_proj_dept ON projects(dept_id);
+
+===============================================================================
+SECTION 10: TRANSACTIONS
+===============================================================================
+
+-- Begin a transaction
+BEGIN;
+
+-- Perform multiple operations
+INSERT INTO departments VALUES (8, 'Legal', 'Washington DC', 450000);
+UPDATE employees SET salary = salary * 1.05 WHERE dept_id = 1;
+DELETE FROM assignments WHERE hours_worked < 50;
+
+-- Check the changes
+SELECT * FROM departments;
+SELECT * FROM employees WHERE dept_id = 1;
+SELECT * FROM assignments;
+
+-- Commit the transaction (save all changes)
+COMMIT;
+
+-- Or rollback (undo all changes)
+ROLLBACK;
+
+-- Example of transaction with rollback
+BEGIN;
+INSERT INTO projects VALUES (207, 'Test Project', 1, '2024-01-01', '2024-12-31', 100000);
+SELECT * FROM projects WHERE proj_id = 207;
+ROLLBACK;
+SELECT * FROM projects WHERE proj_id = 207;  -- This should not show the test project
+
+===============================================================================
+SECTION 11: ADVANCED QUERIES
+===============================================================================
+
+-- Find employees earning more than department average
+SELECT e.emp_name, e.salary, d.dept_name
+FROM employees e
+INNER JOIN departments d ON e.dept_id = d.dept_id
+WHERE e.salary > (SELECT AVG(salary) FROM employees WHERE dept_id = e.dept_id);
+
+-- Find departments with more than 2 employees
+SELECT d.dept_name, COUNT(e.emp_id) as emp_count
+FROM departments d
+LEFT JOIN employees e ON d.dept_id = e.dept_id
+GROUP BY d.dept_name
+HAVING COUNT(e.emp_id) > 2;
+
+-- Top 3 highest paid employees
+SELECT emp_name, salary, dept_id
+FROM employees
+ORDER BY salary DESC
+LIMIT 3;
+
+-- Employees working on multiple projects
+SELECT emp_id, COUNT(*) as project_count
+FROM assignments
+GROUP BY emp_id
+HAVING COUNT(*) > 1;
+
+-- Total hours per project
+SELECT p.proj_name, SUM(a.hours_worked) as total_hours
+FROM projects p
+INNER JOIN assignments a ON p.proj_id = a.proj_id
+GROUP BY p.proj_name
+ORDER BY total_hours DESC;
+
+===============================================================================
+SECTION 12: EXPORT, BACKUP, AND RESTORE
+===============================================================================
+
+-- Export table to CSV file
+EXPORT TO CSV employees.csv FROM employees;
+EXPORT TO CSV departments.csv FROM departments;
+EXPORT TO CSV projects.csv FROM projects;
+
+-- Backup entire database
+BACKUP DATABASE TO company_backup_2024;
+
+-- Restore database from backup
+RESTORE DATABASE FROM company_backup_2024;
+
+===============================================================================
+SECTION 13: COMPLEX QUERY EXAMPLES
+===============================================================================
+
+-- Detailed employee report with department and project info
+SELECT 
+    e.emp_id,
+    e.emp_name,
+    e.age,
+    e.salary,
+    d.dept_name,
+    d.location,
+    COUNT(DISTINCT a.proj_id) as num_projects,
+    SUM(a.hours_worked) as total_hours,
+    AVG(a.hours_worked) as avg_hours_per_project
+FROM employees e
+INNER JOIN departments d ON e.dept_id = d.dept_id
+LEFT JOIN assignments a ON e.emp_id = a.emp_id
+GROUP BY e.emp_id, e.emp_name, e.age, e.salary, d.dept_name, d.location
+ORDER BY total_hours DESC;
+
+-- Budget analysis by department
+SELECT 
+    d.dept_name,
+    d.budget as dept_budget,
+    COUNT(DISTINCT e.emp_id) as employee_count,
+    SUM(e.salary) as total_salary_cost,
+    SUM(p.budget) as total_project_budget,
+    (d.budget - SUM(e.salary)) as budget_remaining
+FROM departments d
+LEFT JOIN employees e ON d.dept_id = e.dept_id
+LEFT JOIN projects p ON d.dept_id = p.dept_id
+GROUP BY d.dept_id, d.dept_name, d.budget;
+
+-- Employee performance summary
+SELECT 
+    e.emp_name,
+    e.salary,
+    COUNT(a.proj_id) as projects_count,
+    COALESCE(SUM(a.hours_worked), 0) as total_hours,
+    CASE 
+        WHEN COUNT(a.proj_id) >= 2 THEN 'High Performer'
+        WHEN COUNT(a.proj_id) = 1 THEN 'Medium Performer'
+        ELSE 'Low Performer'
+    END as performance_rating
+FROM employees e
+LEFT JOIN assignments a ON e.emp_id = a.emp_id
+GROUP BY e.emp_id, e.emp_name, e.salary
+ORDER BY total_hours DESC;
+
+===============================================================================
+SECTION 14: CLEANUP QUERIES
+===============================================================================
+
+-- Drop indexes
+DROP INDEX idx_emp_dept;
+DROP INDEX idx_emp_salary;
+
+-- Delete all data from tables (without dropping tables)
+DELETE FROM assignments;
+DELETE FROM salaries;
+DELETE FROM employees;
+DELETE FROM projects;
+DELETE FROM departments;
+
+-- Drop tables
+DROP TABLE assignments;
+DROP TABLE salaries;
+DROP TABLE employees;
+DROP TABLE projects;
+DROP TABLE departments;
+
+-- Drop database
+DROP DATABASE company;
+
+===============================================================================
+SECTION 15: QUICK TEST SCENARIO
+===============================================================================
+
+-- Complete test scenario to verify all features
+
+CREATE DATABASE testdb;
+USE testdb;
+
+CREATE TABLE users (
+    user_id INT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    age INT
+);
+
+INSERT INTO users VALUES (1, 'alice', 'alice@test.com', 25);
+INSERT INTO users VALUES (2, 'bob', 'bob@test.com', 30);
+INSERT INTO users VALUES (3, 'charlie', 'charlie@test.com', 35);
+
+SELECT * FROM users;
+SELECT * FROM users WHERE age > 28;
+SELECT COUNT(*) FROM users;
+SELECT AVG(age) FROM users;
+
+UPDATE users SET age = 26 WHERE user_id = 1;
+DELETE FROM users WHERE user_id = 3;
+
+SELECT * FROM users ORDER BY username;
+
+BEGIN;
+INSERT INTO users VALUES (4, 'diana', 'diana@test.com', 28);
+SELECT * FROM users;
+ROLLBACK;
+SELECT * FROM users;
+
+EXPORT TO CSV users.csv FROM users;
+BACKUP DATABASE TO test_backup;
+
+DROP TABLE users;
+DROP DATABASE testdb;
+
+===============================================================================
+END OF SAMPLE QUERIES
+===============================================================================
+
+Instructions:
+1. Copy and paste these queries into the DBMS prompt
+2. Each query must end with a semicolon (;)
+3. Commands are case-insensitive
+4. Strings must be enclosed in quotes (single or double)
+5. Use the queries in order as they appear for testing
+
+Happy querying!
+===============================================================================
