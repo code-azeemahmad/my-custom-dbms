@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cmath>
 #include <regex>
+#include <cctype>
 
 namespace fs = std::filesystem;
 
@@ -310,6 +311,41 @@ bool evaluateConditionOnJoinRow(const std::map<std::string, std::any> &row, cons
     return true;
 }
 
+// Helper function for LIKE pattern matching
+bool likeMatch(const std::string &str, const std::string &pattern)
+{
+    std::string regexPattern;
+    regexPattern = "^";
+
+    for (char c : pattern)
+    {
+        if (c == '%')
+        {
+            regexPattern += ".*";
+        }
+        else if (c == '_')
+        {
+            regexPattern += ".";
+        }
+        else if (c == '.' || c == '?' || c == '*' || c == '+' || c == '^' || c == '$' ||
+                 c == '[' || c == ']' || c == '{' || c == '}' || c == '(' || c == ')' ||
+                 c == '|' || c == '\\')
+        {
+            regexPattern += '\\';
+            regexPattern += c;
+        }
+        else
+        {
+            regexPattern += c;
+        }
+    }
+
+    regexPattern += "$";
+
+    std::regex regex(regexPattern, std::regex::icase);
+    return std::regex_match(str, regex);
+}
+
 // Helper function to evaluate conditions on joined rows
 bool evaluateCondition(const Row &row, const std::string &condition)
 {
@@ -486,6 +522,70 @@ bool evaluateCondition(const Row &row, const std::string &condition)
             float cmpVal = std::stof(value);
             return floatVal != cmpVal;
         }
+    }
+
+    // Handle NOT LIKE operator
+    size_t notLikePos = cond.find(" NOT LIKE ");
+    if (notLikePos != std::string::npos)
+    {
+        std::string column = cond.substr(0, notLikePos);
+        std::string pattern = cond.substr(notLikePos + 10); // 10 = length of " NOT LIKE "
+
+        column = trim(column);
+        pattern = trim(pattern);
+
+        // Remove quotes from pattern
+        if (pattern.length() >= 2 && (pattern.front() == '"' || pattern.front() == '\''))
+        {
+            pattern = pattern.substr(1, pattern.length() - 2);
+        }
+
+        if (row.values.find(column) == row.values.end())
+        {
+            return false;
+        }
+
+        auto &val = row.values.at(column);
+
+        if (val.type() == typeid(std::string))
+        {
+            std::string strVal = std::any_cast<std::string>(val);
+            return !likeMatch(strVal, pattern);
+        }
+
+        return false;
+    }
+
+    // Handle LIKE operator
+    size_t likePos = cond.find(" LIKE ");
+    if (likePos != std::string::npos)
+    {
+        std::string column = cond.substr(0, likePos);
+        std::string pattern = cond.substr(likePos + 6); // 6 = length of " LIKE "
+
+        column = trim(column);
+        pattern = trim(pattern);
+
+        // Remove quotes from pattern
+        if (pattern.length() >= 2 && (pattern.front() == '"' || pattern.front() == '\''))
+        {
+            pattern = pattern.substr(1, pattern.length() - 2);
+        }
+
+        if (row.values.find(column) == row.values.end())
+        {
+            return false;
+        }
+
+        auto &val = row.values.at(column);
+
+        if (val.type() == typeid(std::string))
+        {
+            std::string strVal = std::any_cast<std::string>(val);
+            return likeMatch(strVal, pattern);
+        }
+
+        return false;
     }
 
     // THEN: Check for >= operator
