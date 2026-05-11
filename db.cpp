@@ -849,7 +849,7 @@ bool deleteRecords(const std::string &tableName, const std::string &condition)
     return true;
 }
 
-QueryResult select(const std::string &tableName, const std::vector<std::string> &columns, const std::string &condition, const std::string &orderBy, const std::string &orderDir)
+QueryResult select(const std::string &tableName, const std::vector<std::string> &columns, const std::string &condition, const std::string &orderBy, const std::string &orderDir, int limit)
 {
     QueryResult result;
 
@@ -973,6 +973,12 @@ QueryResult select(const std::string &tableName, const std::vector<std::string> 
                 // If equal, continue to next column
             }
             return false; });
+    }
+
+    // Apply LIMIT
+    if (limit > 0 && selectedRows.size() > (size_t)limit)
+    {
+        selectedRows.resize(limit);
     }
 
     // Build result rows
