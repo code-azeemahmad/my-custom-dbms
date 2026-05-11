@@ -884,34 +884,95 @@ QueryResult select(const std::string &tableName, const std::vector<std::string> 
         }
     }
 
-    // Apply ordering
+    // Apply ordering - Support multiple columns
     if (!orderBy.empty())
     {
-        auto it = std::find(result.columns.begin(), result.columns.end(), orderBy);
-        if (it != result.columns.end())
+        // Parse multiple order by columns (comma separated)
+        std::vector<std::pair<std::string, std::string>> orderColumns;
+        std::string orderByStr = orderBy;
+
+        // Also parse the full order by with directions if passed
+        size_t pos = 0;
+        while (pos < orderByStr.length())
         {
-            std::sort(selectedRows.begin(), selectedRows.end(), [&](const Row &a, const Row &b)
-                      {
-                auto valA = a.values.find(orderBy);
-                auto valB = b.values.find(orderBy);
+            size_t commaPos = orderByStr.find(',', pos);
+            std::string colPart = (commaPos == std::string::npos) ? orderByStr.substr(pos) : orderByStr.substr(pos, commaPos - pos);
+
+            // Trim
+            size_t first = colPart.find_first_not_of(" \t\n\r");
+            size_t last = colPart.find_last_not_of(" \t\n\r");
+            if (first != std::string::npos && last != std::string::npos)
+            {
+                colPart = colPart.substr(first, last - first + 1);
+            }
+
+            // Check if column has direction
+            size_t spacePos = colPart.find(' ');
+            std::string column = colPart;
+            std::string direction = "ASC";
+
+            if (spacePos != std::string::npos)
+            {
+                column = colPart.substr(0, spacePos);
+                std::string dir = colPart.substr(spacePos + 1);
+                std::transform(dir.begin(), dir.end(), dir.begin(), ::toupper);
+                if (dir == "DESC")
+                {
+                    direction = "DESC";
+                }
+            }
+
+            orderColumns.push_back({column, direction});
+            pos = (commaPos == std::string::npos) ? orderByStr.length() : commaPos + 1;
+        }
+
+        // Sort using multiple columns
+        std::sort(selectedRows.begin(), selectedRows.end(), [&](const Row &a, const Row &b)
+                  {
+            for (const auto &orderCol : orderColumns)
+            {
+                const std::string &col = orderCol.first;
+                const std::string &dir = orderCol.second;
                 
-                if (valA == a.values.end() || valB == b.values.end()) return false;
+                auto valA = a.values.find(col);
+                auto valB = b.values.find(col);
                 
-                if (valA->second.type() == typeid(int)) {
+                // Handle missing values
+                if (valA == a.values.end() && valB == b.values.end()) continue;
+                if (valA == a.values.end()) return dir == "ASC" ? true : false;
+                if (valB == b.values.end()) return dir == "ASC" ? false : true;
+                
+                // Compare based on type
+                if (valA->second.type() == typeid(int))
+                {
                     int intA = std::any_cast<int>(valA->second);
                     int intB = std::any_cast<int>(valB->second);
-                    return orderDir == "ASC" ? intA < intB : intA > intB;
-                } else if (valA->second.type() == typeid(std::string)) {
-                    std::string strA = std::any_cast<std::string>(valA->second);
-                    std::string strB = std::any_cast<std::string>(valB->second);
-                    return orderDir == "ASC" ? strA < strB : strA > strB;
-                } else if (valA->second.type() == typeid(float)) {
+                    if (intA != intB)
+                    {
+                        return dir == "ASC" ? intA < intB : intA > intB;
+                    }
+                }
+                else if (valA->second.type() == typeid(float))
+                {
                     float floatA = std::any_cast<float>(valA->second);
                     float floatB = std::any_cast<float>(valB->second);
-                    return orderDir == "ASC" ? floatA < floatB : floatA > floatB;
+                    if (floatA != floatB)
+                    {
+                        return dir == "ASC" ? floatA < floatB : floatA > floatB;
+                    }
                 }
-                return false; });
-        }
+                else if (valA->second.type() == typeid(std::string))
+                {
+                    std::string strA = std::any_cast<std::string>(valA->second);
+                    std::string strB = std::any_cast<std::string>(valB->second);
+                    if (strA != strB)
+                    {
+                        return dir == "ASC" ? strA < strB : strA > strB;
+                    }
+                }
+                // If equal, continue to next column
+            }
+            return false; });
     }
 
     // Build result rows

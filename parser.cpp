@@ -399,7 +399,7 @@ bool parseInsert(const std::string &query)
 
 bool parseSelect(const std::string &query)
 {
-    std::regex selectRegex(R"((?:SELECT|FIND)\s+(.+?)\s+FROM\s+(\w+)(?:\s+WHERE\s+(.+))?(?:\s+ORDER\s+BY\s+(\w+)\s+(ASC|DESC))?;?)", std::regex::icase);
+    std::regex selectRegex(R"((?:SELECT|FIND)\s+(.+?)\s+FROM\s+(\w+)(?:\s+WHERE\s+(.+?))?(?:\s+ORDER\s+BY\s+(.+))?;?)", std::regex::icase);
     std::smatch match;
 
     if (std::regex_search(query, match, selectRegex))
@@ -407,18 +407,17 @@ bool parseSelect(const std::string &query)
         std::string columnsStr = match[1].str();
         std::string tableName = match[2].str();
         std::string condition = "";
+        std::string orderBy = "";
 
         if (match.size() > 3 && match[3].matched)
         {
             condition = match[3].str();
-
-            // Remove trailing semicolon if present
+            // Remove trailing semicolon
             size_t semicolonPos = condition.find(';');
             if (semicolonPos != std::string::npos)
             {
                 condition = condition.substr(0, semicolonPos);
             }
-
             // Trim whitespace
             size_t first = condition.find_first_not_of(" \t\n\r");
             size_t last = condition.find_last_not_of(" \t\n\r");
@@ -428,12 +427,23 @@ bool parseSelect(const std::string &query)
             }
         }
 
-        std::string orderBy = "";
-        std::string orderDir = "ASC";
+        // Extract ORDER BY
         if (match.size() > 4 && match[4].matched)
         {
             orderBy = match[4].str();
-            orderDir = match[5].str();
+            // Remove trailing semicolon
+            size_t semicolonPos = orderBy.find(';');
+            if (semicolonPos != std::string::npos)
+            {
+                orderBy = orderBy.substr(0, semicolonPos);
+            }
+            // Trim
+            size_t first = orderBy.find_first_not_of(" \t\n\r");
+            size_t last = orderBy.find_last_not_of(" \t\n\r");
+            if (first != std::string::npos && last != std::string::npos)
+            {
+                orderBy = orderBy.substr(first, last - first + 1);
+            }
         }
 
         std::vector<std::string> columns;
@@ -458,7 +468,7 @@ bool parseSelect(const std::string &query)
             }
         }
 
-        QueryResult result = select(tableName, columns, condition, orderBy, orderDir);
+        QueryResult result = select(tableName, columns, condition, orderBy, "ASC");
         printTable(result);
         return true;
     }
