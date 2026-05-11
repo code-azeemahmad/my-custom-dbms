@@ -1,0 +1,78 @@
+TABLE:assignments
+COLUMN:assign_id:0:11:0:1:0
+COLUMN:emp_id:0:11:0:0:0
+COLUMN:proj_id:0:11:0:0:0
+COLUMN:hours_worked:0:11:0:0:0
+COLUMN:role:1:50:0:0:0
+ROW:1|assign_id=I:301|emp_id=I:101|hours_worked=I:150|proj_id=I:201|role=S:Lead Developer
+ROW:2|assign_id=I:302|emp_id=I:102|hours_worked=I:120|proj_id=I:201|role=S:Developer
+ROW:3|assign_id=I:303|emp_id=I:103|hours_worked=I:100|proj_id=I:202|role=S:Project Manager
+ROW:4|assign_id=I:304|emp_id=I:104|hours_worked=I:130|proj_id=I:203|role=S:Marketing Specialist
+ROW:5|assign_id=I:305|emp_id=I:105|hours_worked=I:110|proj_id=I:204|role=S:Financial Analyst
+ROW:6|assign_id=I:306|emp_id=I:106|hours_worked=I:140|proj_id=I:205|role=S:Sales Director
+ROW:7|assign_id=I:307|emp_id=I:107|hours_worked=I:90|proj_id=I:201|role=S:Support Engineer
+ROW:8|assign_id=I:308|emp_id=I:108|hours_worked=I:160|proj_id=I:206|role=S:Research Scientist
+ROW:9|assign_id=I:309|emp_id=I:109|hours_worked=I:80|proj_id=I:203|role=S:Marketing Manager
+ROW:10|assign_id=I:310|emp_id=I:110|hours_worked=I:100|proj_id=I:205|role=S:Sales Associate
+ROW:11|assign_id=I:311|emp_id=I:101|hours_worked=I:50|proj_id=I:206|role=S:Technical Advisor
+END
+TABLE:departments
+COLUMN:dept_id:0:11:0:1:0
+COLUMN:dept_name:1:50:1:0:0
+COLUMN:location:1:50:0:0:0
+COLUMN:budget:2:8:0:0:0
+ROW:1|budget=F:1e+06|dept_id=I:1|dept_name=S:Engineering|location=S:New York
+ROW:2|budget=F:500000|dept_id=I:2|dept_name=S:Human Resources|location=S:Chicago
+ROW:3|budget=F:750000|dept_id=I:3|dept_name=S:Marketing|location=S:San Francisco
+ROW:4|budget=F:800000|dept_id=I:4|dept_name=S:Finance|location=S:Boston
+ROW:5|budget=F:900000|dept_id=I:5|dept_name=S:Sales|location=S:Los Angeles
+ROW:6|budget=F:600000|dept_id=I:6|dept_name=S:IT Support|location=S:Austin
+ROW:7|budget=F:1.2e+06|dept_id=I:7|dept_name=S:Research|location=S:Seattle
+END
+TABLE:employees
+COLUMN:emp_id:0:11:0:1:0
+COLUMN:emp_name:1:100:1:0:0
+COLUMN:age:0:11:0:0:0
+COLUMN:dept_id:0:11:0:0:0
+COLUMN:salary:2:8:0:0:0
+COLUMN:hire_date:4:10:0:0:0
+COLUMN:email:1:100:0:0:0
+ROW:1|age=I:35|dept_id=I:1|email=S:john.smith@company.com|emp_id=I:101|emp_name=S:John Smith|hire_date=S:2020-01-15|salary=F:85000
+ROW:2|age=I:28|dept_id=I:1|email=S:jane.doe@company.com|emp_id=I:102|emp_name=S:Jane Doe|hire_date=S:2021-03-20|salary=F:75000
+ROW:3|age=I:42|dept_id=I:2|email=S:bob.johnson@company.com|emp_id=I:103|emp_name=S:Bob Johnson|hire_date=S:2019-06-10|salary=F:65000
+ROW:4|age=I:31|dept_id=I:3|email=S:alice.w@company.com|emp_id=I:104|emp_name=S:Alice Williams|hire_date=S:2020-11-05|salary=F:78000
+ROW:5|age=I:29|dept_id=I:4|email=S:charlie.b@company.com|emp_id=I:105|emp_name=S:Charlie Brown|hire_date=S:2021-08-12|salary=F:72000
+ROW:6|age=I:38|dept_id=I:5|email=S:diana.p@company.com|emp_id=I:106|emp_name=S:Diana Prince|hire_date=S:2018-04-25|salary=F:95000
+ROW:7|age=I:33|dept_id=I:6|email=S:edward.n@company.com|emp_id=I:107|emp_name=S:Edward Norton|hire_date=S:2022-01-30|salary=F:68000
+ROW:8|age=I:27|dept_id=I:7|email=S:fiona.a@company.com|emp_id=I:108|emp_name=S:Fiona Apple|hire_date=S:2021-09-18|salary=F:88000
+ROW:9|age=I:45|dept_id=I:3|email=S:george.l@company.com|emp_id=I:109|emp_name=S:George Lucas|hire_date=S:2017-12-01|salary=F:92000
+ROW:10|age=I:26|dept_id=I:5|email=S:hannah.m@company.com|emp_id=I:110|emp_name=S:Hannah Montana|hire_date=S:2022-06-14|salary=F:70000
+END
+TABLE:projects
+COLUMN:proj_id:0:11:0:1:0
+COLUMN:proj_name:1:100:1:0:0
+COLUMN:dept_id:0:11:0:0:0
+COLUMN:start_date:4:10:0:0:0
+COLUMN:end_date:4:10:0:0:0
+COLUMN:budget:2:8:0:0:0
+ROW:1|budget=F:500000|dept_id=I:1|end_date=S:2023-12-31|proj_id=I:201|proj_name=S:Cloud Migration|start_date=S:2023-01-01
+ROW:2|budget=F:250000|dept_id=I:2|end_date=S:2023-11-30|proj_id=I:202|proj_name=S:HR System Upgrade|start_date=S:2023-02-01
+ROW:3|budget=F:300000|dept_id=I:3|end_date=S:2023-10-15|proj_id=I:203|proj_name=S:Digital Marketing Campaign|start_date=S:2023-01-15
+ROW:4|budget=F:400000|dept_id=I:4|end_date=S:2023-09-30|proj_id=I:204|proj_name=S:Financial Audit|start_date=S:2023-03-01
+ROW:5|budget=F:350000|dept_id=I:5|end_date=S:2023-08-31|proj_id=I:205|proj_name=S:Sales CRM Implementation|start_date=S:2023-02-15
+ROW:6|budget=F:800000|dept_id=I:7|end_date=S:2024-06-30|proj_id=I:206|proj_name=S:AI Research|start_date=S:2023-01-10
+END
+TABLE:salaries
+COLUMN:sal_id:0:11:0:1:0
+COLUMN:emp_id:0:11:0:0:0
+COLUMN:amount:2:8:1:0:0
+COLUMN:bonus:2:8:0:0:0
+COLUMN:tax_deduction:2:8:0:0:0
+COLUMN:net_salary:2:8:0:0:0
+COLUMN:pay_date:4:10:0:0:0
+ROW:1|amount=F:85000|bonus=F:5000|emp_id=I:101|net_salary=F:75000|pay_date=S:2024-01-31|sal_id=I:401|tax_deduction=F:15000
+ROW:2|amount=F:75000|bonus=F:4000|emp_id=I:102|net_salary=F:66000|pay_date=S:2024-01-31|sal_id=I:402|tax_deduction=F:13000
+ROW:3|amount=F:65000|bonus=F:3000|emp_id=I:103|net_salary=F:57000|pay_date=S:2024-01-31|sal_id=I:403|tax_deduction=F:11000
+ROW:4|amount=F:78000|bonus=F:4500|emp_id=I:104|net_salary=F:68500|pay_date=S:2024-01-31|sal_id=I:404|tax_deduction=F:14000
+ROW:5|amount=F:72000|bonus=F:4000|emp_id=I:105|net_salary=F:63500|pay_date=S:2024-01-31|sal_id=I:405|tax_deduction=F:12500
+END

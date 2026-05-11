@@ -528,3 +528,10 @@ Instructions:
 
 Happy querying!
 ===============================================================================
+
+
+g++ main.cpp BPlusTree.cpp global.cpp db.cpp parser.cpp -o mydb.exe -std=c++17 -lstdc++fs
+./mydb.exe
+
+
+g++ main.cpp BPlusTree.cpp global.cpp db.cpp parser.cpp -o mydb.exe -std=c++17 && mydb.exe
