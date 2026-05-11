@@ -399,7 +399,7 @@ bool parseInsert(const std::string &query)
 
 bool parseSelect(const std::string &query)
 {
-    std::regex selectRegex(R"((?:SELECT|FIND)\s+(.+?)\s+FROM\s+(\w+)(?:\s+WHERE\s+(.+?))?(?:\s+ORDER\s+BY\s+(.+))?;?)", std::regex::icase);
+    std::regex selectRegex(R"((?:SELECT|FIND)\s+(.+?)\s+FROM\s+(\w+)(?:\s+WHERE\s+(.+?))?(?:\s+ORDER\s+BY\s+(.+?))?(?:\s+LIMIT\s+(\d+))?;?)", std::regex::icase);
     std::smatch match;
 
     if (std::regex_search(query, match, selectRegex))
@@ -408,6 +408,7 @@ bool parseSelect(const std::string &query)
         std::string tableName = match[2].str();
         std::string condition = "";
         std::string orderBy = "";
+        int limit = 0; // <-- DECLARE limit HERE (outside the if blocks)
 
         if (match.size() > 3 && match[3].matched)
         {
@@ -446,6 +447,12 @@ bool parseSelect(const std::string &query)
             }
         }
 
+        // Extract LIMIT
+        if (match.size() > 5 && match[5].matched)
+        {
+            limit = std::stoi(match[5].str());
+        }
+
         std::vector<std::string> columns;
         if (columnsStr == "*")
         {
@@ -468,7 +475,7 @@ bool parseSelect(const std::string &query)
             }
         }
 
-        QueryResult result = select(tableName, columns, condition, orderBy, "ASC");
+        QueryResult result = select(tableName, columns, condition, orderBy, "ASC", limit);
         printTable(result);
         return true;
     }
